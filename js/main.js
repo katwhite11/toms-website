@@ -226,10 +226,10 @@
   const form = document.getElementById('contact-form');
   if (!form) return;
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const btn = form.querySelector('button[type="submit"]');
+    const btn     = form.querySelector('button[type="submit"]');
     const name    = form.querySelector('#name').value.trim();
     const email   = form.querySelector('#email').value.trim();
     const message = form.querySelector('#message').value.trim();
@@ -245,20 +245,36 @@
       return;
     }
 
-    // Simulate submission (replace with real endpoint / emailjs / etc.)
-    btn.disabled    = true;
-    btn.textContent = 'Sending…';
+    const originalText  = btn.textContent;
+    btn.disabled        = true;
+    btn.textContent     = 'Sending…';
 
-    setTimeout(function () {
+    const formData = new FormData(form);
+    formData.append('access_key', '37575e1a-8bd8-4a83-9826-36796c460a74');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        form.reset();
+        showFormMessage(
+          form,
+          'Thank you! Your message has been sent. Dr. Lyons will be in touch soon.',
+          'success'
+        );
+      } else {
+        showFormMessage(form, 'Error: ' + data.message, 'error');
+      }
+    } catch (error) {
+      showFormMessage(form, 'Something went wrong. Please try again.', 'error');
+    } finally {
       btn.disabled    = false;
-      btn.textContent = 'Send Message';
-      form.reset();
-      showFormMessage(
-        form,
-        'Thank you! Your message has been sent. Dr. Lyons will be in touch soon.',
-        'success'
-      );
-    }, 1200);
+      btn.textContent = originalText;
+    }
   });
 
   function isValidEmail(email) {
