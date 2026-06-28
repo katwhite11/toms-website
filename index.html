@@ -507,6 +507,7 @@
         <p>Whether you're looking to license curriculum, book a speaking engagement, or just connect — reach out using the form below.</p>
       </div>
       <form class="contact-form fade-in-up delay-1" id="contact-form">
+           <div class="h-captcha" data-captcha="true"></div>
         <div class="form-row">
           <div class="form-group">
             <label for="name">Your Name</label>
@@ -554,5 +555,20 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="https://web3forms.com/client/script.js" async defer></script>
+  <script>
+const form = document.getElementById('37575e1a-8bd8-4a83-9826-36796c460a74');
+
+form.addEventListener('submit', function(e) {
+
+    const hCaptcha = form.querySelector('textarea[name=h-captcha-response]').value;
+
+    if (!hCaptcha) {
+        e.preventDefault();
+        alert("Please fill out captcha field")
+        return
+    }
+});
+</script>
 </body>
 </html>
